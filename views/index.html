@@ -1,11 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Laboratorio 6 - Películas</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-lg bg-primary sticky-top border-bottom border-body" data-bs-theme="dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">Lab. 6</a>
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="index.php">Películas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Géneros</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <form class="d-flex" role="search" method="post" action="">
+                        <input class="form-control me-2" type="search" placeholder="Búsqueda..." aria-label="Search" name="search" required>
+                        <button class="btn btn-outline-light" type="submit">Buscar</button>
+                    </form>
+                </div>
+            </nav>
+        </header>
+        <div class="container">
+            <div class="fs-1 text-center">Películas</div>
+            <div class="d-flex justify-content-end">
+                <a href="movie_new.php" class="btn btn-outline-primary">Agregar</a>
+            </div>
+            <table class="table mt-3 mb-5">
+                <thead>
+                    <tr>
+                        <th class="col-5">Titulo</th>
+                        <th class="col-2">Género</th>
+                        <th class="col-2">Año de Estreno</th>
+                        <th class="col-3">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="col-md-4 d-flex align-items-center">
+                <span class="ms-3 mb-3 mb-md-0 text-body-secondary">&copy; 2024 - Desarrollo de Aplicaciones en Internet</span>
+            </div>
+            <div class="d-flex col-md-4 justify-content-end">
+                <a href="https://www.tecsup.edu.pe/" target="_blank" class="me-3"><img src="./images/logo-tecsup.jpg" style="width:192px; height:42px;"></a>
+            </div>
+        </footer>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
 </html>
