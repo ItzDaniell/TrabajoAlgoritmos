@@ -1,0 +1,7 @@
+
+    .product-image {
+        width: 100%; /* Hace que la imagen ocupe todo el ancho del contenedor */
+        height: 200px; /* Altura fija para todas las imágenes */
+        object-fit: cover; /* Mantiene la relación de aspecto y recorta la imagen si es necesario */
+        object-fit: cover;
+    }
