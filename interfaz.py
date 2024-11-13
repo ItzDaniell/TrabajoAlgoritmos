@@ -70,9 +70,12 @@ class TiendaApp:
         self.tree.heading("estado", text="Estado")
         self.tree.grid(row=2, column=0, padx=10, pady=10)
 
-        # Botones adicionales
-        tk.Button(root, text="Confirmar Envío", command=self.confirmar_envio).grid(row=3, column=0, pady=10)
-        tk.Button(root, text="Eliminar Pedido", command=self.eliminar_pedido).grid(row=3, column=1, pady=10)
+        # Botones de acción
+        button_frame = tk.Frame(root)
+        button_frame.grid(row=3, column=0, pady=10)
+        tk.Button(button_frame, text="Confirmar Envío", command=self.confirmar_envio).grid(row=0, column=0, padx=5)
+        tk.Button(button_frame, text="Eliminar Pedido", command=self.eliminar_pedido).grid(row=0, column=1, padx=5)
+        tk.Button(button_frame, text="Editar Pedido", command=self.editar_pedido).grid(row=0, column=2, padx=5)
 
     def agregar_pedido(self):
         nombre = self.nombre_entry.get()
@@ -117,6 +120,65 @@ class TiendaApp:
                     self.actualizar_tabla()
         else:
             messagebox.showerror("Error", "Selecciona un pedido para eliminar.")
+
+    def editar_pedido(self):
+        selected_item = self.tree.selection()
+        if selected_item:
+            for item in selected_item:
+                pedido_values = self.tree.item(item, "values")
+                nombre_cliente = pedido_values[0]
+                pedido = next((p for p in self.pedidos if p.nombre == nombre_cliente), None)
+                if pedido:
+                    # Rellenar los campos con los valores actuales del pedido
+                    self.nombre_entry.delete(0, tk.END)
+                    self.nombre_entry.insert(0, pedido.nombre)
+
+                    self.prenda_entry.delete(0, tk.END)
+                    self.prenda_entry.insert(0, pedido.prenda)
+
+                    self.talla_entry.delete(0, tk.END)
+                    self.talla_entry.insert(0, pedido.talla)
+
+                    self.cantidad_entry.delete(0, tk.END)
+                    self.cantidad_entry.insert(0, str(pedido.cantidad))
+
+                    self.precio_entry.delete(0, tk.END)
+                    self.precio_entry.insert(0, str(pedido.precio))
+
+                    # Eliminar el pedido de la lista temporalmente
+                    self.pedidos.remove(pedido)
+                    self.actualizar_tabla()
+
+                    # Cambiar el botón de agregar para "Guardar Cambios"
+                    self.guardar_cambios_btn = tk.Button(self.root, text="Guardar Cambios", command=lambda: self.guardar_cambios(pedido))
+                    self.guardar_cambios_btn.grid(row=5, column=0, columnspan=2, pady=5)
+        else:
+            messagebox.showerror("Error", "Selecciona un pedido para editar.")
+
+    def guardar_cambios(self, pedido):
+        # Guardar los cambios en el pedido editado
+        nombre = self.nombre_entry.get()
+        prenda = self.prenda_entry.get()
+        talla = self.talla_entry.get()
+        try:
+            cantidad = int(self.cantidad_entry.get())
+            precio = float(self.precio_entry.get())
+            if nombre and prenda and talla and cantidad > 0 and precio > 0:
+                pedido.nombre = nombre
+                pedido.prenda = prenda
+                pedido.talla = talla
+                pedido.cantidad = cantidad
+                pedido.precio = precio
+                pedido.total = cantidad * precio  # Recalcular el total
+                self.pedidos.append(pedido)
+                self.pedidos.sort(key=lambda p: p.fecha)  # Ordena por fecha
+                self.actualizar_tabla()
+                self.limpiar_campos()
+                self.guardar_cambios_btn.grid_forget()  # Ocultar el botón después de guardar cambios
+            else:
+                messagebox.showerror("Error", "Por favor, llena todos los campos correctamente.")
+        except ValueError:
+            messagebox.showerror("Error", "Cantidad y Precio deben ser numéricos.")
 
     def actualizar_tabla(self):
         for item in self.tree.get_children():
