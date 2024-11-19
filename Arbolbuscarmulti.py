@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+
 # Nodo para lista enlazada
 class NodoPedido:
     def __init__(self, pedido_id, nombre, prenda, talla, cantidad, precio, estado="Pendiente"):
@@ -47,6 +48,32 @@ class ListaEnlazadaPedidos:
                 return actual
             actual = actual.siguiente
         return None
+    
+# Clase para manejar la lista enlazada de resultados
+class ListaResultados:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar(self, pedido):
+        nuevo_nodo = NodoPedido(
+            pedido.pedido_id, pedido.nombre, pedido.prenda, pedido.talla,
+            pedido.cantidad, pedido.precio, pedido.estado
+        )
+        if not self.cabeza:
+            self.cabeza = nuevo_nodo
+        else:
+            actual = self.cabeza
+            while actual.siguiente:
+                actual = actual.siguiente
+            actual.siguiente = nuevo_nodo
+
+    def obtener_todos(self):
+        pedidos = []
+        actual = self.cabeza
+        while actual:
+            pedidos.append(actual)
+            actual = actual.siguiente
+        return pedidos
 
 
 # Nodo para árbol binario
@@ -80,47 +107,66 @@ class ArbolBinarioPedidos:
             else:
                 nodo.derecha = NodoArbol(pedido)
 
-    def buscar(self, nombre):
-        return self._buscar_recursivo(self.raiz, nombre)
+    def buscar_y_transferir(self, nombre, lista_resultados):
+        """Busca todos los pedidos con el nombre especificado y los transfiere a la lista enlazada."""
+        self._buscar_recursivo(self.raiz, nombre, lista_resultados)
 
-    def _buscar_recursivo(self, nodo, nombre):
+    def _buscar_recursivo(self, nodo, nombre, lista_resultados):
         if not nodo:
-            return None
+            return
         if nodo.pedido.nombre == nombre:
-            return nodo.pedido
-        if nombre < nodo.pedido.nombre:
-            return self._buscar_recursivo(nodo.izquierda, nombre)
-        return self._buscar_recursivo(nodo.derecha, nombre)
+            lista_resultados.agregar(nodo.pedido)
+        self._buscar_recursivo(nodo.izquierda, nombre, lista_resultados)
+        self._buscar_recursivo(nodo.derecha, nombre, lista_resultados)
 
 
-# Cola para procesar pedidos
+# Nodo para la cola
+class NodoCola:
+    def __init__(self, pedido):
+        self.pedido = pedido
+        self.siguiente = None
+
+
+# Cola para gestionar pedidos pendientes de cambio de estado
 class ColaPedidos:
     def __init__(self):
         self.frente = None
         self.final = None
 
     def encolar(self, pedido):
+        nuevo_nodo = NodoCola(pedido)
         if not self.final:
-            self.frente = self.final = pedido
+            self.frente = self.final = nuevo_nodo
         else:
-            self.final.siguiente = pedido
-            self.final = pedido
+            self.final.siguiente = nuevo_nodo
+            self.final = nuevo_nodo
 
     def desencolar(self):
         if not self.frente:
             return None
-        pedido = self.frente
+        pedido = self.frente.pedido
         self.frente = self.frente.siguiente
         if not self.frente:
             self.final = None
         return pedido
+
+    def vaciar(self):
+        self.frente = self.final = None
+
+    def obtener_todos(self):
+        pedidos = []
+        actual = self.frente
+        while actual:
+            pedidos.append(actual.pedido)
+            actual = actual.siguiente
+        return pedidos
 
 
 # Plataforma de gestión con Tkinter
 class PlataformaPedidos:
     def __init__(self, root):
         self.root = root
-        self.root.title("Gestión de Pedidos - Tienda de Ropa")
+        self.root.title("Gestión de Pedidos")
         self.root.geometry("950x700")
 
         # Estructuras de datos
@@ -135,7 +181,6 @@ class PlataformaPedidos:
         self.cantidad = tk.IntVar()
         self.precio = tk.DoubleVar()
         self.buscar_texto = tk.StringVar()
-        self.criterio_busqueda = tk.StringVar(value="Nombre")
 
         frame_ingreso = tk.LabelFrame(self.root, text="Ingreso de Pedidos", padx=10, pady=10)
         frame_ingreso.pack(fill="x", padx=10, pady=5)
@@ -162,15 +207,11 @@ class PlataformaPedidos:
         frame_busqueda = tk.LabelFrame(self.root, text="Buscar Pedido", padx=10, pady=10)
         frame_busqueda.pack(fill="x", padx=10, pady=5)
 
-        tk.Label(frame_busqueda, text="Buscar por:").grid(row=0, column=0, padx=5, pady=2)
-        criterios = ttk.Combobox(frame_busqueda, textvariable=self.criterio_busqueda, values=["Nombre", "Prenda", "Estado"])
-        criterios.grid(row=0, column=1, padx=5, pady=2)
+        tk.Label(frame_busqueda, text="Texto de Búsqueda:").grid(row=0, column=0, padx=5, pady=2)
+        tk.Entry(frame_busqueda, textvariable=self.buscar_texto, width=25).grid(row=0, column=1, padx=5, pady=2)
 
-        tk.Label(frame_busqueda, text="Texto de Búsqueda:").grid(row=0, column=2, padx=5, pady=2)
-        tk.Entry(frame_busqueda, textvariable=self.buscar_texto, width=25).grid(row=0, column=3, padx=5, pady=2)
-
-        tk.Button(frame_busqueda, text="Buscar Pedido", command=self.buscar_pedido).grid(row=0, column=4, padx=5, pady=2)
-        tk.Button(frame_busqueda, text="Mostrar Todos", command=self.mostrar_todos).grid(row=0, column=5, padx=5, pady=2)
+        tk.Button(frame_busqueda, text="Buscar Pedido", command=self.buscar_pedido).grid(row=0, column=2, padx=5, pady=2)
+        tk.Button(frame_busqueda, text="Mostrar Todos", command=self.mostrar_todos).grid(row=0, column=3, padx=5, pady=2)
 
         self.tree = ttk.Treeview(self.root, columns=("ID", "Nombre", "Prenda", "Talla", "Cantidad", "Precio", "Total", "Estado"))
         self.tree.heading("#0", text="", anchor="w")
@@ -203,8 +244,8 @@ class PlataformaPedidos:
         frame_confirmar = tk.Frame(self.root)
         frame_confirmar.pack(fill="x", padx=10, pady=5)
 
-        tk.Button(frame_confirmar, text="Aceptar", command=self.aceptar).pack(side="left", padx=5, pady=5)
-        tk.Button(frame_confirmar, text="Cancelar", command=self.cancelar).pack(side="right", padx=5, pady=5)
+        tk.Button(frame_confirmar, text="Aceptar", command=self.aceptar_cambios).pack(side="left", padx=5, pady=5)
+        tk.Button(frame_confirmar, text="Cancelar", command=self.cancelar_cambios).pack(side="right", padx=5, pady=5)
 
     def agregar_pedido(self):
         if not self.nombre_cliente.get() or not self.prenda.get() or not self.cantidad.get() or not self.precio.get():
@@ -218,7 +259,6 @@ class PlataformaPedidos:
             self.cantidad.get(),
             self.precio.get(),
         )
-        # Actualizar en el árbol binario
         ultimo_pedido = self.lista_pedidos.obtener_todos()[-1]
         self.arbol_pedidos.insertar(ultimo_pedido)
         self.mostrar_todos()
@@ -233,18 +273,16 @@ class PlataformaPedidos:
 
     def buscar_pedido(self):
         texto = self.buscar_texto.get().strip()
-        criterio = self.criterio_busqueda.get()
         self.tree.delete(*self.tree.get_children())
 
-        resultados = []
-        if criterio == "Nombre":
-            pedido = self.arbol_pedidos.buscar(texto)
-            if pedido:
-                resultados.append(pedido)
-        elif criterio == "Prenda":
-            resultados = [p for p in self.lista_pedidos.obtener_todos() if texto.lower() in p.prenda.lower()]
-        elif criterio == "Estado":
-            resultados = [p for p in self.lista_pedidos.obtener_todos() if texto.lower() == p.estado.lower()]
+        # Crear una lista enlazada para almacenar los resultados
+        lista_resultados = ListaResultados()
+
+        # Buscar en el árbol binario y transferir a la lista enlazada
+        self.arbol_pedidos.buscar_y_transferir(texto, lista_resultados)
+
+        # Mostrar los resultados desde la lista enlazada
+        resultados = lista_resultados.obtener_todos()
 
         if resultados:
             for pedido in resultados:
@@ -255,30 +293,37 @@ class PlataformaPedidos:
         else:
             messagebox.showinfo("Resultado", "No se encontraron pedidos con ese criterio.")
 
+
     def cambiar_estado(self):
         seleccion = self.tree.selection()
         if not seleccion:
             messagebox.showwarning("Error", "Seleccione un pedido para cambiar el estado.")
             return
 
-        item = seleccion[0]
-        pedido_id = int(self.tree.item(item, "values")[0])
-        pedido = self.lista_pedidos.obtener_pedido(pedido_id)
+        for item in seleccion:
+            pedido_id = int(self.tree.item(item, "values")[0])
+            pedido = self.lista_pedidos.obtener_pedido(pedido_id)
+            if pedido:
+                self.cola_pedidos.encolar(pedido)
 
-        if pedido:
+        messagebox.showinfo("Cambiar Estado", "Pedidos agregados a la cola para cambiar estado.")
+
+    def aceptar_cambios(self):
+        while True:
+            pedido = self.cola_pedidos.desencolar()
+            if not pedido:
+                break
             if pedido.estado == "Pendiente":
                 pedido.estado = "Enviado"
             elif pedido.estado == "Enviado":
                 pedido.estado = "Pendiente"
 
-            self.mostrar_todos()
-            messagebox.showinfo("Éxito", f"El estado del pedido {pedido_id} ahora es: {pedido.estado}")
+        self.mostrar_todos()
+        messagebox.showinfo("Éxito", "Se han aplicado los cambios a los estados de los pedidos.")
 
-    def aceptar(self):
-        messagebox.showinfo("Confirmación", "Cambios guardados correctamente.")
-
-    def cancelar(self):
-        self.root.destroy()
+    def cancelar_cambios(self):
+        self.cola_pedidos.vaciar()
+        messagebox.showinfo("Cancelado", "Todos los cambios han sido descartados.")
 
 
 # Crear ventana principal
