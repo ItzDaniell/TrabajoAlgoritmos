@@ -205,7 +205,7 @@ class PlataformaPedidos:
         self.tree.column("Total", anchor="w", width=80)
         self.tree.column("Estado", anchor="w", width=100)
 
-        self.tree.pack(fill="both", expand=True, padx=10, pady=5)
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Acciones
         frame_acciones = tk.Frame(self.root)
@@ -279,21 +279,25 @@ class PlataformaPedidos:
             messagebox.showwarning("Error", "No se pudo eliminar el pedido.")
 
     def buscar_pedido(self):
-        """Busca un pedido en el árbol binario."""
-        nombre = self.buscar_texto.get().strip()
+        """Busca un pedido en el árbol binario y lo muestra en la tabla."""
+        nombre = self.buscar_texto.get().strip()  # Obtener el nombre del cliente ingresado
         if not nombre:
             messagebox.showwarning("Error", "Ingrese un nombre para buscar.")
             return
 
+        # Realizar la búsqueda en el árbol binario
         pedido = self.arbol_pedidos.buscar(nombre)
+        self.tree.delete(*self.tree.get_children())  # Limpiar la tabla antes de mostrar el resultado
         if pedido:
-            messagebox.showinfo(
-                "Resultado",
-                f"Pedido encontrado:\nID: {pedido.pedido_id}, Cliente: {pedido.nombre}, "
-                f"Prenda: {pedido.prenda}, Estado: {pedido.estado}"
-            )
+            # Insertar el pedido encontrado en la tabla
+            self.tree.insert("", "end", values=(
+                pedido.pedido_id, pedido.nombre, pedido.prenda, pedido.talla,
+                pedido.cantidad, pedido.precio, pedido.total, pedido.estado
+            ))
         else:
+            # Mostrar mensaje en la tabla indicando que no hay resultados
             messagebox.showinfo("Resultado", "No se encontró un pedido con ese nombre.")
+
 
 
 # Crear ventana principal
