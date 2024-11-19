@@ -207,7 +207,7 @@ class PlataformaPedidos:
         frame_busqueda = tk.LabelFrame(self.root, text="Buscar Pedido", padx=10, pady=10)
         frame_busqueda.pack(fill="x", padx=10, pady=5)
 
-        tk.Label(frame_busqueda, text="Texto de Búsqueda:").grid(row=0, column=0, padx=5, pady=2)
+        tk.Label(frame_busqueda, text="Buscar por nombre:").grid(row=0, column=0, padx=5, pady=2)
         tk.Entry(frame_busqueda, textvariable=self.buscar_texto, width=25).grid(row=0, column=1, padx=5, pady=2)
 
         tk.Button(frame_busqueda, text="Buscar Pedido", command=self.buscar_pedido).grid(row=0, column=2, padx=5, pady=2)
