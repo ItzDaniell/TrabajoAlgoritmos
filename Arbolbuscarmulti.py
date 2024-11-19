@@ -307,7 +307,18 @@ class PlataformaPedidos:
                 self.cola_pedidos.encolar(pedido)
 
         messagebox.showinfo("Cambiar Estado", "Pedidos agregados a la cola para cambiar estado.")
+        while True:
+            pedido = self.cola_pedidos.desencolar()
+            if not pedido:
+                break
+            if pedido.estado == "Pendiente":
+                pedido.estado = "Enviado"
+            elif pedido.estado == "Enviado":
+                pedido.estado = "Pendiente"
 
+        self.mostrar_todos()
+        messagebox.showinfo("Éxito", "Se han aplicado los cambios a los estados de los pedidos.")
+    
     def aceptar_cambios(self):
         while True:
             pedido = self.cola_pedidos.desencolar()
