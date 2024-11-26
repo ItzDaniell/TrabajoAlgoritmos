@@ -1,159 +1,126 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-from datetime import datetime
+from tkinter import messagebox
 
-class Pedido:
-    def __init__(self, nombre, prenda, talla, cantidad, precio, estado="Pendiente"):
-        self.nombre = nombre
-        self.prenda = prenda
-        self.talla = talla
-        self.cantidad = cantidad
-        self.precio = precio
-        self.total = cantidad * precio
-        self.estado = estado
-        self.fecha = datetime.now()  # Fecha y hora de creación del pedido
+# Función para manejar el inicio de sesión
+def iniciar_sesion():
+    usuario = entry_usuario.get()
+    contrasena = entry_contrasena.get()
+    if usuario == "admin" and contrasena == "admin123":
+        ventana_login.destroy()
+        abrir_menu_principal()
+    else:
+        messagebox.showerror("Error", "Usuario o contraseña incorrectos")
 
-class TiendaApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Gestión de Pedidos - Tienda de Ropa")
-        self.pedidos = []
+# Función para salir de la aplicación
+def salir():
+    ventana_login.destroy()
 
-        self.crear_interfaz()
+# Función para abrir el menú principal
+def abrir_menu_principal():
+    ventana_menu = tk.Tk()
+    ventana_menu.title("Menú Principal")
+    ventana_menu.geometry("500x350")
+    ventana_menu.configure(bg="#2c3e50")
+    
+    label_bienvenida = tk.Label(
+        ventana_menu, text="Bienvenido, Administrador", 
+        font=("Arial", 16, "bold"), bg="#2c3e50", fg="white"
+    )
+    label_bienvenida.pack(pady=20)
+    
+    # Botón para agregar productos
+    btn_agregar_productos = tk.Button(
+        ventana_menu, text="Agregar Productos", 
+        font=("Arial", 12, "bold"), width=20, bg="#27ae60", fg="white", 
+        command=ventana_agregar_productos, relief="flat", cursor="hand2"
+    )
+    btn_agregar_productos.pack(pady=10)
+    
+    # Botón para gestionar pedidos
+    btn_gestionar_pedidos = tk.Button(
+        ventana_menu, text="Gestionar Pedidos", 
+        font=("Arial", 12, "bold"), width=20, bg="#27ae60", fg="white", 
+        command=ventana_agregar_pedidos, relief="flat", cursor="hand2"
+    )
+    btn_gestionar_pedidos.pack(pady=10)
+    
+    # Botón para agregar clientes nuevos
+    btn_gestionar_pedidos = tk.Button(
+        ventana_menu, text="Agregar Clientes", 
+        font=("Arial", 12, "bold"), width=20, bg="#27ae60", fg="white", 
+        command=ventana_agregar_clientes, relief="flat", cursor="hand2"
+    )
+    btn_gestionar_pedidos.pack(pady=10)
+    
+    # Botón para salir del menú principal
+    btn_salir_menu = tk.Button(
+        ventana_menu, text="Salir", 
+        font=("Arial", 12, "bold"), width=20, bg="#e74c3c", fg="white", 
+        command=ventana_menu.destroy, relief="flat", cursor="hand2"
+    )
+    btn_salir_menu.pack(pady=20)
+    
+    ventana_menu.mainloop()
+    
+def ventana_agregar_productos():
+     messagebox.showinfo("Agregar Productos", "Esta funcionalidad estará disponible pronto.")
 
-    def crear_interfaz(self):
-        self.crear_formulario()
-        self.crear_busqueda()
-        self.crear_tabla()
-        self.crear_botones()
+# Función para agregar pedidos
+def ventana_agregar_pedidos():
+    messagebox.showinfo("Agregar Pedidos", "Esta funcionalidad estará disponible pronto.")
+    
+def ventana_agregar_clientes():
+     messagebox.showinfo("Agregar Clientes", "Esta funcionalidad estará disponible pronto.")
 
-    def crear_formulario(self):
-        frame = tk.Frame(self.root, padx=10, pady=10)
-        frame.grid(row=0, column=0, sticky="w")
 
-        campos = ["Nombre del Cliente", "Prenda", "Talla", "Cantidad", "Precio"]
-        self.entradas = {}
+# Crear ventana de inicio de sesión
+ventana_login = tk.Tk()
+ventana_login.title("Inicio de Sesión")
+ventana_login.geometry("400x500")
+ventana_login.configure(bg="#34495e")
 
-        for i, campo in enumerate(campos):
-            tk.Label(frame, text=f"{campo}:").grid(row=i, column=0)
-            entrada = tk.Entry(frame)
-            entrada.grid(row=i, column=1)
-            self.entradas[campo.lower()] = entrada
+# Marco para el diseño del formulario
+frame_formulario = tk.Frame(ventana_login, bg="#2c3e50", bd=5, relief="ridge")
+frame_formulario.place(relx=0.5, rely=0.5, anchor="center", width=350, height=400)
 
-        tk.Button(frame, text="Agregar Pedido", command=self.agregar_pedido).grid(row=len(campos), column=0, columnspan=2, pady=5)
+label_titulo = tk.Label(
+    frame_formulario, text="Inicio de Sesión", 
+    font=("Arial", 18, "bold"), bg="#2c3e50", fg="white"
+)
+label_titulo.pack(pady=20)
 
-    def crear_busqueda(self):
-        frame = tk.Frame(self.root, padx=10, pady=5)
-        frame.grid(row=1, column=0, sticky="w")
+# Campo de usuario
+label_usuario = tk.Label(
+    frame_formulario, text="Usuario", 
+    font=("Arial", 12), bg="#2c3e50", fg="white"
+)
+label_usuario.pack(pady=5)
+entry_usuario = tk.Entry(frame_formulario, font=("Arial", 12), width=25, bd=2)
+entry_usuario.pack(pady=5)
 
-        tk.Label(frame, text="Buscar Pedido (Cliente o Prenda):").grid(row=0, column=0)
-        self.buscar_entry = tk.Entry(frame)
-        self.buscar_entry.grid(row=0, column=1)
+# Campo de contraseña
+label_contrasena = tk.Label(
+    frame_formulario, text="Contraseña", 
+    font=("Arial", 12), bg="#2c3e50", fg="white"
+)
+label_contrasena.pack(pady=5)
+entry_contrasena = tk.Entry(frame_formulario, font=("Arial", 12), width=25, bd=2, show="*")
+entry_contrasena.pack(pady=5)
 
-        tk.Button(frame, text="Buscar", command=self.buscar_pedido).grid(row=0, column=2, padx=5)
-        tk.Button(frame, text="Mostrar Todos", command=self.mostrar_todos_pedidos).grid(row=0, column=3)
+# Botón para iniciar sesión
+btn_login = tk.Button(
+    frame_formulario, text="Iniciar Sesión", 
+    font=("Arial", 12, "bold"), bg="#27ae60", fg="white", 
+    command=iniciar_sesion, relief="flat", cursor="hand2"
+)
+btn_login.pack(pady=15)
 
-    def crear_tabla(self):
-        columnas = ["nombre", "prenda", "talla", "cantidad", "precio", "total", "estado"]
-        self.tree = ttk.Treeview(self.root, columns=columnas, show="headings")
+# Botón para salir
+btn_salir = tk.Button(
+    frame_formulario, text="Salir", 
+    font=("Arial", 12, "bold"), bg="#e74c3c", fg="white", 
+    command=salir, relief="flat", cursor="hand2"
+)
+btn_salir.pack(pady=10)
 
-        for col in columnas:
-            self.tree.heading(col, text=col.capitalize())
-
-        self.tree.grid(row=2, column=0, padx=10, pady=10)
-
-    def crear_botones(self):
-        frame = tk.Frame(self.root)
-        frame.grid(row=3, column=0, pady=10)
-
-        acciones = [
-            ("Confirmar Envío", self.confirmar_envio),
-            ("Eliminar Pedido", self.eliminar_pedido),
-            ("Editar Pedido", self.editar_pedido),
-        ]
-
-        for i, (text, command) in enumerate(acciones):
-            tk.Button(frame, text=text, command=command).grid(row=0, column=i, padx=5)
-
-    def agregar_pedido(self):
-        try:
-            datos = {campo: entrada.get() for campo, entrada in self.entradas.items()}
-            datos["cantidad"] = int(datos["cantidad"])
-            datos["precio"] = float(datos["precio"])
-
-            if all(datos.values()) and datos["cantidad"] > 0 and datos["precio"] > 0:
-                nuevo_pedido = Pedido(**datos)
-                self.pedidos.append(nuevo_pedido)
-                self.actualizar_tabla()
-                self.limpiar_campos()
-            else:
-                raise ValueError
-        except ValueError:
-            messagebox.showerror("Error", "Por favor, verifica los campos: Cantidad y Precio deben ser números positivos.")
-
-    def confirmar_envio(self):
-        self.actualizar_estado_pedido("Enviado")
-
-    def eliminar_pedido(self):
-        self.actualizar_estado_pedido("Eliminar")
-
-    def editar_pedido(self):
-        selected = self.tree.selection()
-        if not selected:
-            messagebox.showerror("Error", "Selecciona un pedido para editar.")
-            return
-
-        item = self.tree.item(selected[0], "values")
-        pedido = self.buscar_pedido_por_nombre(item[0])
-        if pedido:
-            for campo, valor in pedido.__dict__.items():
-                if campo in self.entradas:
-                    self.entradas[campo].delete(0, tk.END)
-                    self.entradas[campo].insert(0, valor)
-            self.pedidos.remove(pedido)
-            self.actualizar_tabla()
-
-    def buscar_pedido_por_nombre(self, nombre):
-        return next((p for p in self.pedidos if p.nombre == nombre), None)
-
-    def actualizar_estado_pedido(self, nuevo_estado):
-        selected = self.tree.selection()
-        if not selected:
-            messagebox.showerror("Error", "Selecciona un pedido.")
-            return
-
-        for item in selected:
-            valores = self.tree.item(item, "values")
-            pedido = self.buscar_pedido_por_nombre(valores[0])
-
-            if pedido:
-                if nuevo_estado == "Eliminar":
-                    self.pedidos.remove(pedido)
-                else:
-                    pedido.estado = nuevo_estado
-
-        self.actualizar_tabla()
-
-    def buscar_pedido(self):
-        termino = self.buscar_entry.get().lower()
-        pedidos_filtrados = [
-            p for p in self.pedidos if termino in p.nombre.lower() or termino in p.prenda.lower()
-        ]
-        self.actualizar_tabla(pedidos_filtrados)
-
-    def actualizar_tabla(self, pedidos=None):
-        self.tree.delete(*self.tree.get_children())
-        for pedido in pedidos or self.pedidos:
-            self.tree.insert("", "end", values=(pedido.nombre, pedido.prenda, pedido.talla, pedido.cantidad, pedido.precio, pedido.total, pedido.estado))
-
-    def mostrar_todos_pedidos(self):
-        self.actualizar_tabla()
-
-    def limpiar_campos(self):
-        for entrada in self.entradas.values():
-            entrada.delete(0, tk.END)
-
-# Inicializar aplicación
-root = tk.Tk()
-app = TiendaApp(root)
-root.mainloop()
+ventana_login.mainloop()
