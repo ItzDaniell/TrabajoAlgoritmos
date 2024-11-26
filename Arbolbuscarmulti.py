@@ -19,30 +19,30 @@ class NodoPedido:
 # Lista enlazada para gestionar pedidos
 class ListaEnlazadaPedidos:
     def __init__(self):
-        self.cabeza = None
+        self.head = None
         self.id_actual = 1
 
     def agregar_pedido(self, nombre, prenda, talla, cantidad, precio):
         nuevo_pedido = NodoPedido(self.id_actual, nombre, prenda, talla, cantidad, precio)
         self.id_actual += 1
-        if not self.cabeza:
-            self.cabeza = nuevo_pedido
+        if not self.head:
+            self.head = nuevo_pedido
         else:
-            actual = self.cabeza
+            actual = self.head
             while actual.siguiente:
                 actual = actual.siguiente
             actual.siguiente = nuevo_pedido
 
     def obtener_todos(self):
         pedidos = []
-        actual = self.cabeza
+        actual = self.head
         while actual:
             pedidos.append(actual)
             actual = actual.siguiente
         return pedidos
 
     def obtener_pedido(self, pedido_id):
-        actual = self.cabeza
+        actual = self.head
         while actual:
             if actual.pedido_id == pedido_id:
                 return actual
@@ -52,24 +52,24 @@ class ListaEnlazadaPedidos:
 # Clase para manejar la lista enlazada de resultados
 class ListaResultados:
     def __init__(self):
-        self.cabeza = None
+        self.head = None
 
     def agregar(self, pedido):
         nuevo_nodo = NodoPedido(
             pedido.pedido_id, pedido.nombre, pedido.prenda, pedido.talla,
             pedido.cantidad, pedido.precio, pedido.estado
         )
-        if not self.cabeza:
-            self.cabeza = nuevo_nodo
+        if not self.head:
+            self.head = nuevo_nodo
         else:
-            actual = self.cabeza
+            actual = self.head
             while actual.siguiente:
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
 
     def obtener_todos(self):
         pedidos = []
-        actual = self.cabeza
+        actual = self.head
         while actual:
             pedidos.append(actual)
             actual = actual.siguiente
@@ -244,9 +244,6 @@ class PlataformaPedidos:
         frame_confirmar = tk.Frame(self.root)
         frame_confirmar.pack(fill="x", padx=10, pady=5)
 
-        tk.Button(frame_confirmar, text="Aceptar", command=self.aceptar_cambios).pack(side="left", padx=5, pady=5)
-        tk.Button(frame_confirmar, text="Cancelar", command=self.cancelar_cambios).pack(side="right", padx=5, pady=5)
-
     def agregar_pedido(self):
         if not self.nombre_cliente.get() or not self.prenda.get() or not self.cantidad.get() or not self.precio.get():
             messagebox.showwarning("Error", "Todos los campos deben ser llenados.")
@@ -318,24 +315,6 @@ class PlataformaPedidos:
 
         self.mostrar_todos()
         messagebox.showinfo("Éxito", "Se han aplicado los cambios a los estados de los pedidos.")
-    
-    def aceptar_cambios(self):
-        while True:
-            pedido = self.cola_pedidos.desencolar()
-            if not pedido:
-                break
-            if pedido.estado == "Pendiente":
-                pedido.estado = "Enviado"
-            elif pedido.estado == "Enviado":
-                pedido.estado = "Pendiente"
-
-        self.mostrar_todos()
-        messagebox.showinfo("Éxito", "Se han aplicado los cambios a los estados de los pedidos.")
-
-    def cancelar_cambios(self):
-        self.cola_pedidos.vaciar()
-        messagebox.showinfo("Cancelado", "Todos los cambios han sido descartados.")
-
 
 # Crear ventana principal
 root = tk.Tk()
