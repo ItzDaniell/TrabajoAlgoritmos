@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
+from pedido import PlataformaPedidos 
+from producto import Interfaz 
 
 # Función para manejar el inicio de sesión
 def iniciar_sesion():
@@ -63,12 +65,12 @@ def abrir_menu_principal():
     ventana_menu.mainloop()
     
 def ventana_agregar_productos():
-     messagebox.showinfo("Agregar Productos", "Esta funcionalidad estará disponible pronto.")
-
+    ventana_producto = tk.Toplevel() 
+    Interfaz(ventana_producto)
 # Función para agregar pedidos
 def ventana_agregar_pedidos():
-    messagebox.showinfo("Agregar Pedidos", "Esta funcionalidad estará disponible pronto.")
-    
+    ventana_pedidos = tk.Toplevel()  
+    PlataformaPedidos(ventana_pedidos)
 def ventana_agregar_clientes():
      messagebox.showinfo("Agregar Clientes", "Esta funcionalidad estará disponible pronto.")
 
@@ -124,3 +126,4 @@ btn_salir = tk.Button(
 btn_salir.pack(pady=10)
 
 ventana_login.mainloop()
+

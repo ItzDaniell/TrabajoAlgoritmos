@@ -244,8 +244,11 @@ class PlataformaPedidos:
         # Buscar en el árbol binario y mostrar los pedidos encontrados
         find(self.arbol_pedidos, cliente, self)
 
-
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PlataformaPedidos(root)
+    root.mainloop()
 # Crear la ventana de la aplicación
-root = tk.Tk()
-app = PlataformaPedidos(root)
-root.mainloop()
+#root = tk.Tk()
+#app = PlataformaPedidos(root)
+#root.mainloop()
