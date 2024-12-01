@@ -1,18 +1,16 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-# Clase NodoTalla: Representa cada talla con su stock y precio
 class NodoTalla:
     def __init__(self, talla, stock, precio):
         self.talla = talla
         self.stock = stock
         self.precio = precio
-        self.siguiente = None  # Puntero al siguiente nodo
+        self.siguiente = None
 
-# Clase ListaTallas: Representa una lista enlazada de tallas
 class ListaTallas:
     def __init__(self):
-        self.cabeza = None  # Puntero inicial de la lista
+        self.cabeza = None
 
     def agregar_talla(self, talla, stock, precio):
         nuevo_nodo = NodoTalla(talla, stock, precio)
@@ -33,20 +31,19 @@ class ListaTallas:
             actual = actual.siguiente
         return tallas
 
-# Clase Modelo: Representa un modelo asociado a una lista de tallas
 class Modelo:
     def __init__(self, nombre, prenda, marca):
         self.nombre = nombre
         self.prenda = prenda
         self.marca = marca
         self.tallas = ListaTallas()
-
-# Clase Interfaz: Representa la interfaz gráfica
+        
 class Interfaz:
-    def __init__(self, root):
+    def __init__(self, root, modelos):
         self.root = root
         self.root.title("Gestión de Modelos y Tallas")
         self.root.geometry("800x600")
+        self.modelos = modelos
 
         # Lista de modelos
         self.modelos = []
@@ -186,5 +183,6 @@ class Interfaz:
 # Programa principal
 if __name__ == "__main__":
     root = tk.Tk()
-    app = Interfaz(root)
+    modelos = []
+    app = Interfaz(root, modelos)
     root.mainloop()
